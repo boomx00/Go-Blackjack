@@ -13,14 +13,20 @@ type balance struct {
 	amount int
 }
 
-func main() {
-	// decks := newDeck()
-	// var playerHand, houseHand deck
-	// var playerString, houseString string
-	// playerHand, houseHand, playerString, houseString = decks.dealCards(playerHand, houseHand)
-	// fmt.Println(playerString)
-	// fmt.Println(houseString)
+func (bPointer *balance) updateBalanceBet(v int) {
+	(*bPointer).amount -= v
+}
 
+// func (b balance) winBalance(change int) int {
+// 	finalBalance := b.amount + change
+// 	return finalBalance
+// }
+
+func (bPointer *balance) updateBalanceWinOrDraw(v int) {
+	(*bPointer).amount += v
+}
+
+func main() {
 	balance := balance{amount: 100}
 	reader := bufio.NewReader(os.Stdin) // Create a new reader to read from standard input (terminal)
 
@@ -42,7 +48,7 @@ func main() {
 		if betAmount > 0 {
 			var playerHand, houseHand deck
 			var playerString, houseString string
-			balance.amount = balance.betBalance(betAmount)
+			balance.updateBalanceBet(betAmount)
 			fmt.Println("Current balance ", balance.getBalance())
 			time.Sleep(time.Second)
 			fmt.Println("Cards Being Delt")
@@ -68,17 +74,18 @@ func main() {
 					fmt.Println(playerValue)
 					if houseValue > 21 {
 						fmt.Println("You Win!")
-						balance.amount = balance.winBalance(betAmount * 2)
+						balance.updateBalanceWinOrDraw(betAmount * 2)
 						fmt.Println("New Balance: ", balance.amount)
 						fmt.Println("Starting new game")
 					} else if playerValue > houseValue {
 						fmt.Println("You Win!")
-						balance.amount = balance.winBalance(betAmount * 2)
+						balance.updateBalanceWinOrDraw(betAmount * 2)
 						fmt.Println("New Balance: ", balance.amount)
 						fmt.Println("Starting new game")
 					} else if playerValue == houseValue {
 						fmt.Println("Draw")
-						balance.amount = balance.amount + betAmount
+
+						balance.updateBalanceWinOrDraw(betAmount)
 					} else {
 						fmt.Println("You Lose, New Balance: ", balance.amount)
 						fmt.Println("Starting new game")
@@ -118,17 +125,17 @@ func main() {
 								fmt.Println(playerValue)
 								if houseValue > 21 {
 									fmt.Println("You Win!")
-									balance.amount = balance.winBalance(betAmount * 2)
+									balance.updateBalanceWinOrDraw(betAmount * 2)
 									fmt.Println("New Balance: ", balance.amount)
 									fmt.Println("Starting new game")
 								} else if playerValue > houseValue {
 									fmt.Println("You Win!")
-									balance.amount = balance.winBalance(betAmount * 2)
+									balance.updateBalanceWinOrDraw(betAmount * 2)
 									fmt.Println("New Balance: ", balance.amount)
 									fmt.Println("Starting new game")
 								} else if playerValue == houseValue {
 									fmt.Println("Draw")
-									balance.amount = balance.amount + betAmount
+									balance.updateBalanceWinOrDraw(betAmount)
 								} else {
 									fmt.Println("You Lose, New Balance: ", balance.amount)
 									fmt.Println("Starting new game")
@@ -150,15 +157,6 @@ func main() {
 
 func (b balance) getBalance() int {
 	return b.amount
-}
-
-func (b balance) betBalance(change int) int {
-	finalBalance := b.amount - change
-	return finalBalance
-}
-func (b balance) winBalance(change int) int {
-	finalBalance := b.amount + change
-	return finalBalance
 }
 
 func bet() int {
